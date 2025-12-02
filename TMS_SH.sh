@@ -1,39 +1,43 @@
 #!/bin/bash
+INPUT_DIR="$1"
 
-MAJ_MAPPA="$1"
-
-if [ -z "$MAJ_MAPPA" ]; then
-    echo "Hiba: Hiányzik a feltöltendő mappa elérési útja."
-    echo "Használat: ./tms_ps.sh \"/út/a/projekt/mappához\""
+if [ -z "$INPUT_DIR" ]; then
+    echo "Hiba: Hiányzik a mappa."
+    echo "Használat: tms ./"
     exit 1
 fi
 
-if [ ! -d "$MAJ_MAPPA" ]; then
-    echo "Hiba: A megadott mappa nem létezik vagy nem elérhető: $MAJ_MAPPA"
+if cd "$INPUT_DIR"; then
+    FULL_PATH=$(pwd)
+    cd - > /dev/null 
+else
+    echo "Hiba: A mappa nem létezik: $INPUT_DIR"
     exit 1
 fi
 
-echo "Tisztítás indítása a(z) '$MAJ_MAPPA' mappában..."
+MAPPA_NEVE=$(basename "$FULL_PATH")
+SZULO_MAPPA=$(dirname "$FULL_PATH")
+ZIP_NEV="$MAPPA_NEVE.zip"
+ZIP_TELJES_UT="$SZULO_MAPPA/$ZIP_NEV"
 
-MAPPAK_TÖRLÉSHEZ=(".vs" "bin" "obj")
+echo "------------------------------------------------"
+echo "Célpont: $MAPPA_NEVE"
+echo "Tisztítás..."
+echo "------------------------------------------------"
 
-for mappa_nev in "${MAPPAK_TÖRLÉSHEZ[@]}"; do
-    find "$MAJ_MAPPA" -type d -name "$mappa_nev" -exec echo "Törlés: {}" \; -exec rm -rf {} \;
+for item in ".vs" "bin" "obj"; do
+    find "$FULL_PATH" -type d -name "$item" -exec rm -rf {} + 2>/dev/null
 done
 
-echo "Tisztítás befejezve."
+echo "Tömörítés..."
 
-echo "Tömörítés indítása..."
+cd "$SZULO_MAPPA"
 
-PARENT_DIR=$(dirname "$MAJ_MAPPA")
-MAPPA_NEVE=$(basename "$MAJ_MAPPA")
-
-ZIP_UT="$PARENT_DIR/$MAPPA_NEVE.zip"
-
-if zip -r -9 -q "$ZIP_UT" "$MAJ_MAPPA"; then
-    echo "Kész: A tömörített fájl elérési útja: $ZIP_UT"
+if zip -r -9 -q "$ZIP_NEV" "$MAPPA_NEVE"; then
+    echo "SIKER!"
+    echo "Létrejött: $ZIP_TELJES_UT"
 else
-    echo "Hiba: A ZIP fájl létrehozása sikertelen."
+    echo "Hiba történt a tömörítéskor."
     exit 1
 fi
 
