@@ -1,6 +1,6 @@
 # TMS_CLEANER
 
-Különböző Visual Studio projektek könnyebb feltöltését szolgáló szkriptek gyűjteménye, hogy ne kelljen manuálisan törölni azokat a mappákat, amiket az ELTE TMS rendszere nem enged feltölteni (pl.: `.vs`, `bin`, `obj`).
+Különböző Visual Studio (Rider) projektek könnyebb feltöltését szolgáló szkriptek gyűjteménye, hogy ne kelljen manuálisan törölni azokat a mappákat, amiket az ELTE TMS rendszere nem enged feltölteni (pl.: `.vs`, `bin`, `obj`).
 
 ---
 
